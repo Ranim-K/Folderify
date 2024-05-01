@@ -1,3 +1,5 @@
+import string
+from tracemalloc import start
 import inquirer
 import os
 import subprocess
@@ -79,6 +81,38 @@ def create_folder():
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
+def rename_folders():
+    parent_dir = input("Enter the path of the directory containing folders: ")
+
+    while not os.path.exists(parent_dir):
+        print("Invalid Path Directory! ")
+        pare = input("Please Enter a Valid path: ")
+
+    choice = input("Do you want to rename folders to uppercase or lowercase? (U/u for uppercase, L/l for lowercase): ")
+    if choice.lower() == 'u':
+        folders = [chr(i) for i in range(65, 91)]
+    elif choice.lower() == 'l':
+        folders = [chr(i) for i in range(97, 123)]
+    else:
+        print("Invalid choice. Please enter U/u for uppercase or L/l for lowercase.")
+        return
+    
+    folders_list = [f for f in os.listdir(parent_dir) if os.path.isdir(os.path.join(parent_dir, f))]
+    folders_list.sort()
+
+    for i, folder_name in enumerate(folders_list):
+        new_name = folders[i % len(folders)]
+        if i >= len(folders):
+            new_name += str(i // len(folders))
+        old_path = os.path.join(parent_dir, folder_name)
+        new_path = os.path.join(parent_dir, new_name)
+        os.rename(old_path, new_path)
+        print(f"Folder '{folder_name}' renamed to '{new_name}'.")
+    
+    print("Folders have been renamed alphabetically!")
+    subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])      
+
+
 
 def return_to_menu():
     input("Press enter to return to the main menu....")
@@ -93,7 +127,7 @@ def main():
                           message='Menu',
                           choices=[
                               ("Create Folders", "1"),
-                              ("Rename folder or file", "2"),
+                              ("Rename Folders", "2"),
                               ("Organize files", "3"),
                               ("Exit", "4")
                           ],
@@ -110,7 +144,12 @@ def main():
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")
         elif choice == '2':
-            print('two')
+            try:
+                rename_folders()
+            except ValueError as ve:
+                print(f"Error: {ve}")    
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
         elif choice == '3':
             print('three')
         elif choice == '4':
