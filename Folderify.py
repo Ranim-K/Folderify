@@ -12,6 +12,42 @@ def display_ascii_art():
     ascii_art = pyfiglet.figlet_format("Sortify")
     print(Fore.BLUE + ascii_art)
 
+def create_numeric_folders(folders_number,parent_dir )  :
+    for i in range(1, folders_number + 1):
+        folder_name = str(i)
+        folder_path = os.path.join(parent_dir, folder_name)
+        os.makedirs(folder_path)
+    print("The folders have been created successfully!")
+    subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+
+def create_alphabetic_folders(folders_number,parent_dir):
+    case_choice = input("Do you want to create folders in uppercase or lowercase? (U/u for uppercase, L/l for lowercase): ")
+    if case_choice.lower() == 'u':
+        folders = [chr(i) for i in range(65, 91)]
+    elif case_choice.lower() == 'l' :
+        folders = [chr(i) for i in range(97, 123)]  
+    else:
+        print("Invalid choice. Please enter U/u for uppercase or L/l for lowercase.")
+        exit(1) 
+    for i in range(folders_number):
+        folder_name = folders[i % len(folders)]
+        if i >= len(folders):
+            folder_name += str(i // len(folders))
+        folder_path = os.path.join(parent_dir, folder_name)
+        os.makedirs(folder_path)
+    print("The folders have been created alphabetically!")
+    subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+
+def create_custome_folder(parent_dir,folders_number):
+    folder_name = input("Enter Folder Name: ") 
+
+    for i in range(1, folders_number + 1):
+        folder_path = os.path.join(parent_dir, f"{folder_name}_{i}")
+        os.makedirs(folder_path)
+    
+    print("The folders have been created successfully!")
+    subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+
 
 def create_folder():
     while True:
@@ -44,36 +80,12 @@ def create_folder():
                 raise ValueError("Invalid choice. Please select a valid option.")
 
             if choice == "1":
-                for i in range(1, folders_number + 1):
-                    folder_name = str(i)
-                    folder_path = os.path.join(parent_dir, folder_name)
-                    os.makedirs(folder_path)
-                print("The folders have been created successfully!")
-                subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+                create_numeric_folders(folders_number, parent_dir)
             elif choice == "2":
-                case_choice = input("Do you want to create folders in uppercase or lowercase? (U/u for uppercase, L/l for lowercase): ")
-                if case_choice.lower() == 'u':
-                    folders = [chr(i) for i in range(65, 91)]
-                elif case_choice.lower() == 'l' :
-                    folders = [chr(i) for i in range(97, 123)]  
-                else:
-                    print("Invalid choice. Please enter U/u for uppercase or L/l for lowercase.")
-                    exit(1) 
-                for i in range(folders_number):
-                    folder_name = folders[i % len(folders)]
-                    if i >= len(folders):
-                        folder_name += str(i // len(folders))
-                    folder_path = os.path.join(parent_dir, folder_name)
-                    os.makedirs(folder_path)
-                print("The folders have been created alphabetically!")
-                subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+                create_alphabetic_folders(folders_number, parent_dir) 
                                 
             elif choice == "3":
-                folder_name = input("Enter Folder Name: ")
-                folder_path = os.path.join(parent_dir, folder_name)
-                os.makedirs(folder_path)
-                print("The folders have been created successfully!")
-                subprocess.Popen(["Explorer", os.path.realpath(parent_dir)])
+                create_custome_folder(parent_dir,folders_number)
             break
 
         except ValueError as ve:
